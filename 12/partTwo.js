@@ -1,6 +1,8 @@
 const fs = require("fs");
 const data = fs.readFileSync("./data.txt", "utf8").split("\r\n");
 
+const start = Date.now();
+
 const connections = {};
 
 for (const connection of data) {
@@ -19,7 +21,7 @@ const usedPaths = [];
 
 goToEnd(["start"], []);
 
-function goToEnd(currentPath, usedSmallCaves) {
+function goToEnd(currentPath, usedSmallCaves, skip) {
     for (const inner of connections[currentPath[currentPath.length - 1]]) {
         // reached the end
         if (inner == "end") {
@@ -30,7 +32,11 @@ function goToEnd(currentPath, usedSmallCaves) {
         const usedSmallCavesCopy = [...usedSmallCaves];
     
         // if a cave has been used twice already, check if it's only been used once and then continue if it has
-        if (Object.values(usedSmallCavesCopy.reduce((a, c) => (a[c] = (a[c] || 0) + 1, a), {})).find(e => e == 2)) {
+        if (!skip) {
+            skip = Object.values(usedSmallCavesCopy.reduce((a, c) => (a[c] = (a[c] || 0) + 1, a), {})).find(e => e == 2);
+        }
+
+        if (skip) {
             if (usedSmallCavesCopy.includes(inner)) continue;
         }
         
@@ -39,9 +45,9 @@ function goToEnd(currentPath, usedSmallCaves) {
             usedSmallCavesCopy.push(inner);
         }
 
-        goToEnd([...currentPath, inner], usedSmallCavesCopy);
+        goToEnd([...currentPath, inner], usedSmallCavesCopy, skip);
     }
 }
 
-//console.log(usedPaths);
 console.log(usedPaths.length);
+console.log("Time taken: " + (Date.now() - start) + "ms");
