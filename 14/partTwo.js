@@ -22,7 +22,7 @@ for (let i = 0; i < start.length - 1; i++) {
 function step() {
     const newPairs = {};
 
-    Object.keys(pairs).forEach(pair => {
+    Object.keys(pairs).forEach((pair) => {
         if (!rules[pair]) return;
 
         const pairOne = pair[0] + rules[pair];
